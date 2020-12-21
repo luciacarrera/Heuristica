@@ -12,8 +12,8 @@ while True:
         obPos = content[1].split(";")
         for ob in obPos:
             print(ob)
-    if(content[0]=="SAT1"):
-        
+    #if(content[0]=="SAT1"):
+
     
     print(line)
 file1.close()
