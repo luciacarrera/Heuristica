@@ -67,8 +67,7 @@ def astar_search(map, start, end, battery):
         currentNode = open.pop(0)
         # Add the current node to the closed list
         closed.append(currentNode)
-        #EXPANSIONS
-
+        battery= battery +1
         #check if we have reached the goal
         #return path
         if currentNode == goalNode:
