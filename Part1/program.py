@@ -4,47 +4,13 @@ from constraint import *
 #definition of a variable as our program
 problem = Problem()
 
-#input file
-inputFile = open("original.prob","r+")  
-  
 vars ={}
 timeslots={}
-
-while True:
-    # read a single line
-    line = inputFile.readline()
-    if not line:
-        break
-    
-    if line.find("#") == -1 and line.find("SAT")!=-1:
-        #first we split the line into sattelite & time vs. antennaes
-        content=line.split(";")
-
-        #we edit the antennaes part so that it is can be legible for the program
-        ants = content[1]
-        ants = ants.replace("( ",'')
-        ants = ants.replace(")","")
-        ants =ants.replace(" ","")
-        #we add a list of the antennaes that correspond to the sattelite at a certain time
-        vars[content[0]] = ants.split(",")
-        
-
-        #now we add the timeslot to our timeslot list so that we can use it our program
-        time = content[0].split(":")
-        #we must edit the information so that it is properly stored
-        time[1] = time[1].replace("( ",'')
-        time[1] = time[1].replace(" ", "")
-        time[1] = time[1].replace(")", "")
-        timeList = time[1].split(",")
-        #transform list into an integer list
-        for i in range(0, len(timeList)): 
-            timeList[i] = int(timeList[i]) 
-        timeslots[content[0]] = timeList
-
+vars["SAT1 (0,12)"] = {}
+timeslots["SAT1 (0,12)"] = {0,12}
 for ivar in vars:
             problem.addVariable(ivar,vars[ivar])
 
-inputFile.close()
 
 #Constraint1: All satellites must have a transmission antenna assigned to it in all its time slots
 
