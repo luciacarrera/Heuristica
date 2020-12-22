@@ -8,7 +8,7 @@ class Node:
         self.parent = parent
         self.g = 0 # Distance to start node
         self.h = 0 # Distance to goal node
-        self.t = 0 # Total time
+        self.f = 0 # Total cost
     # Compare nodes
     def __eq__(self, other):
         return self.position == other.position
@@ -32,7 +32,7 @@ def draw_tile(map, position, kwargs):
     # Get the map value
     value = map.get(position)
     # Check if we should print the path
-    if 'path' in kwargs and position in kwargs['path']: value = 'x'
+    if 'path' in kwargs and position in kwargs['path']: value = '+'
     # Check if we should print start point
     if 'start' in kwargs and position == kwargs['start']: value = '@'
     # Check if we should print the goal point
@@ -41,14 +41,14 @@ def draw_tile(map, position, kwargs):
     return value 
 
 
-def astar_search(map, start, end, battery):
+def astar_search(map, start, end):
     #(Hour, Orbit, Band1, Band2, Bat1, Bat2, 
     # pendingObservation, pendingDownload, Downloaded)
 
     #creating list for the opened nodes and closed nodes
     open = []
     closed =[]
-    bat =0
+    battery = 0
 
     #create two nodes: start and goal node
     startNode= Node(start, None)
@@ -56,7 +56,6 @@ def astar_search(map, start, end, battery):
 
     #adding the start node to the opened list
     open.append(startNode)
-    #battery=battery-1
 
 
     # Loop until the open list is empty
@@ -74,9 +73,8 @@ def astar_search(map, start, end, battery):
             path= []
             while currentNode != startNode:
                 path.append(currentNode.position)
-                currentNode=currentNode.parent  
-            return path[:: -1]
-                
+                currentNode=currentNode.parent
+                return path[:: -1]
         #in order to geth the current position of the node
         (x,y)=currentNode.position
 
@@ -89,7 +87,7 @@ def astar_search(map, start, end, battery):
             map_value = map.get(next)
             # Check if the node is a wall
             #if(map_value == '#'):
-            #    continue
+            ##    continue
             # Create a neighbor node
             neighbor = Node(next, currentNode)
             # Check if the neighbor is in the closed list
@@ -97,21 +95,13 @@ def astar_search(map, start, end, battery):
                 continue
 
             # Generate heuristics (Manhattan distance)
-            #neighbor.f = battery
-            # Generate heuristics (Manhattan distance)
-            #neighbor.g = abs(neighbor.position[0] - startNode.position[0]) + abs(neighbor.position[1] - startNode.position[1])
-            #neighbor.h = abs(neighbor.position[0] - goalNode.position[0]) + abs(neighbor.position[1] - goalNode.position[1])
-            #neighbor.f = neighbor.g + neighbor.h
+            neighbor.f = battery
             
-            neighbor.f = abs(startNode.position[0] - goalNode.position[0]) 
-
             # Check if neighbor is in open list and if it has a lower f value
             if(add_to_open(open, neighbor) == True):
                 # Everything is green, add neighbor to open list
-                open.append(neighbor)       
+                open.append(neighbor)        
             # Return None, no path is found
-        #return battery
-        #print("Battery: {0}".format(str(bat)))
     return None
         
 
@@ -140,6 +130,7 @@ def main():
     while len(chars) > 0:
         # Get chars in a line
         chars = [str(i) for i in fp.readline().strip()]
+        print(chars)
         # Calculate the width
         width = len(chars) if width == 0 else width
         # Add chars to map
@@ -155,15 +146,13 @@ def main():
             height += 1
     # Close the file pointer
     fp.close()
-
-    battery=0
     # Find the closest path from start(@) to end(O)
-    path = astar_search(map, start, end, battery)
+    path = astar_search(map, start, end)
     print()
     print(path)
     print()
     draw_grid(map, width, height, spacing=1, path=path, start=start, goal=end)
-    print("Battery: {0}".format(str(battery)))
+    print()
     print('Steps to goal: {0}'.format(len(path)))
     print()
 

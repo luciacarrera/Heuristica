@@ -13,8 +13,10 @@ while True:
         for ob in obPos:
             print(ob)
     #if(content[0]=="SAT1"):
-
+    #SATX: measure; downlink; turn; charge; initialBat
     
     print(line)
 file1.close()
+
+maps
 
