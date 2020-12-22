@@ -18,5 +18,3 @@ while True:
     print(line)
 file1.close()
 
-maps
-

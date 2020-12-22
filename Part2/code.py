@@ -20,25 +20,43 @@ class Node:
         return ('({0},{1})'.format(self.position, self.f))
 
 # Draw a grid
-def draw_grid(map, width, height, spacing=2, **kwargs):
-    for y in range(height):
-        for x in range(width):
-            print('%%-%ds' % spacing % draw_tile(map, (x, y), kwargs), end='')
+def draw_grid(map, width, height, observations, spacing=2, **kwargs):
+    #for y in range(height):
+    #    for x in range(width):
+    #        print('%%-%ds' % spacing % draw_tile(map, (x, y), kwargs), end='')
+    #    print()
+    l=[[0]*height for i in range(width)]
+
+    # fill some random values in it
+    for i in range(0,width):
+        for j in range(0,height):
+            l[i][j] = '-'
+    
+    for i in range(0,len(observations)):
+        l[observations[i][0]][observations[i][1]] = 'O'
+        
+            
+    # print the list
+    for i in range(0,width):
         print()
+        for j in range(0,height):
+            print(l[i][j],end=" ")
 
 # Draw a tile
-def draw_tile(map, position, kwargs):
+#def draw_tile(map, position, kwargs):
     
     # Get the map value
-    value = map.get(position)
+    #value = map.get(position)
+    #if position in kwargs == (0,8): value= ''
+
     # Check if we should print the path
-    if 'path' in kwargs and position in kwargs['path']: value = 'x'
+    #if 'path' in kwargs and position in kwargs['path']: value = 'x'
     # Check if we should print start point
-    if 'start' in kwargs and position == kwargs['start']: value = '@'
+    #if 'start' in kwargs and position == kwargs['start']: value = '@'
     # Check if we should print the goal point
-    if 'goal' in kwargs and position == kwargs['goal']: value = 'O'
+    #if 'goal' in kwargs and position == kwargs['goal']: value = 'O'
     # Return a tile value
-    return value 
+    #return value 
 
 
 def astar_search(map, start, end, battery):
@@ -131,30 +149,34 @@ def main():
     start = None
     end = None
     etc = None
-    width = 0
-    height = 0
-    # Open a file
-    fp = open('data.txt', 'r')
-    
-    # Loop until there is no more lines
-    while len(chars) > 0:
-        # Get chars in a line
-        chars = [str(i) for i in fp.readline().strip()]
-        # Calculate the width
-        width = len(chars) if width == 0 else width
-        # Add chars to map
-        for x in range(len(chars)):
-            map[(x, height)] = chars[x]
-            if(chars[x] == '@'):
-                start = (x, height)
-            elif(chars[x] == 'O'):
-                end = (x, height)
+    width = 4
+    height = 12
+
+    file1 = open("problema.prob","r+")  
+  
+    observations ={}
+    while True:
+        # read a single line
+        line = file1.readline()
+        if not line:
+            break
+        content=line.split(":")
+        if(content[0]=="OBS"):
+            obPos = content[1].split(";")
+            i=0
+            for ob in obPos:
+                ob = ob.replace("(","")
+                ob = ob.replace(")","")
+                intOb = ob.split(",")
+                for j in range(0, len(intOb)): 
+                    intOb[j] = int(intOb[j]) 
+                observations[i]=intOb
+                i+=1
+        #if(content[0]=="SAT1"):
+        #SATX: measure; downlink; turn; charge; initialBat
         
-        # Increase the height of the map
-        if(len(chars) > 0):
-            height += 1
-    # Close the file pointer
-    fp.close()
+        print(line)
+    file1.close()
 
     battery=0
     # Find the closest path from start(@) to end(O)
@@ -162,8 +184,9 @@ def main():
     print()
     print(path)
     print()
-    draw_grid(map, width, height, spacing=1, path=path, start=start, goal=end)
-    print("Battery: {0}".format(str(battery)))
+    draw_grid(map, width, height,observations, spacing=1, path=path, start=start, goal=end)
+    #print("Battery: {0}".format(str(battery)))
+    print()
     print('Steps to goal: {0}'.format(len(path)))
     print()
 
