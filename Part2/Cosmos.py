@@ -97,6 +97,4 @@ def main():
 
 #path = astar_search(map, start, end)
 
-
-
 if __name__ == "__main__": main()
